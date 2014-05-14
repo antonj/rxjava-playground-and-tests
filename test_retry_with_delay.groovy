@@ -11,18 +11,26 @@ def oneAndFail() {
   });
 }
 
-oneAndFail()
-  .onErrorResumeNext( oneAndFail() )//.delaySubscription(2, TimeUnit.SECONDS) )
-  .subscribe({ arg -> println(arg) },
-             { e -> println(e.getMessage()) },
-             { println('complete') });
+// oneAndFail()
+//   .onErrorResumeNext( oneAndFail() )//.delaySubscription(2, TimeUnit.SECONDS) )
+//   .subscribe({ arg -> println(arg) },
+//              { e -> println(e.getMessage()) },
+//              { println('complete') });
 
-println('================')
+println('================ only retry')
 
-oneAndFail()
-   .onErrorResumeNext(  oneAndFail().delaySubscription(100, TimeUnit.MILLISECONDS).retry(3) )
-   .subscribe({ arg -> println(arg) },
+// oneAndFail()
+// .onErrorResumeNext(
+//   oneAndFail()
+//   // .delaySubscription(2000, TimeUnit.MILLISECONDS)
+//   .retry(3)
+// ).subscribe({ arg -> println('-> ' + arg) },
+//               { e -> println(e.getMessage()) },
+//               { println('complete') });
+
+oneAndFail().retry(5).flatMap({ n -> Observable.from(n * 2) })
+.subscribe({ arg -> println('-> ' + arg) },
               { e -> println(e.getMessage()) },
               { println('complete') });
 
-Thread.sleep(30000)
+Thread.sleep(300000)
